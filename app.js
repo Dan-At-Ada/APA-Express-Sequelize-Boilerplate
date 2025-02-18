@@ -36,6 +36,7 @@ const Task = sequelize.define('Task', {
 })
 
 User.hasMany(Task);
+// Task.hasOne(User);
 
 // Middleware and view engine: https://expressjs.com/en/guide/using-template-engines.html
 app.use(express.urlencoded({ extended: true }));
@@ -61,21 +62,32 @@ app.post('/', async (req, res) => {
   } catch (error) {
     res.status(400).send(error.message);
   }
+
+  
 });
 
 app.get('/:userId', async (req, res) => {
   const id = req.params.userId;
   const user = await User.findByPk(id);
+  const userTasks = await user.getTasks();
+
+  // const task = await Task.findByPk(1);
+  // const taskUser = await task.getUser();
  
-  res.render("user", { user })// {user:user}
-}
-  
-  
-)
+  res.render("user", { user, userTasks })// {user:user}
+})
 
 app.post('/:userId/newTask', async (req,res) =>{
-  // handle new task here for user
+  const { title, desc } = req.body;
+  
+  const user = await User.findByPk(req.params.userId)
+  user.destroy()
+  await user.createTask({title, description: desc})
+  // const task = await Task.create()
+  // task.setUser(user)
+  
 
+  res.redirect('/'+req.params.userId)
 
 })
 

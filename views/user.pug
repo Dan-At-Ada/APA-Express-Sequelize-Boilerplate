@@ -7,6 +7,19 @@ html
     p Name: #{user.name}
     p Email: #{user.email}
     p CreatedAt: #{user.updatedAt}
-    // form goes here
+    each task in userTasks 
+      p #{task.title}
+      p #{task.description}
+
+    form(action="/" + user.id + "/newTask" method="POST")
+      div
+        label(for="title") Name:
+        input(type="text" name="title" required)
+      div
+        label(for="desc") description:
+        input(type="text" name="desc" required)
+      div
+        button(type="submit") Add Task
+    
     a(href="/") Back to Users
 
