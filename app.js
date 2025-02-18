@@ -24,6 +24,19 @@ const User = sequelize.define('User', {
   }
 });
 
+const Task = sequelize.define('Task', {
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+User.hasMany(Task);
+
 // Middleware and view engine: https://expressjs.com/en/guide/using-template-engines.html
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'pug');
@@ -33,7 +46,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.get('/', async (req, res) => {
   try {
     const users = await User.findAll();
-    res.render('index', { users });
+    console.log(users)
+    res.render('index', { users } ); // { users: users }
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -48,6 +62,22 @@ app.post('/', async (req, res) => {
     res.status(400).send(error.message);
   }
 });
+
+app.get('/:userId', async (req, res) => {
+  const id = req.params.userId;
+  const user = await User.findByPk(id);
+ 
+  res.render("user", { user })// {user:user}
+}
+  
+  
+)
+
+app.post('/:userId/newTask', async (req,res) =>{
+  // handle new task here for user
+
+
+})
 
 // Sync database and start server
 sequelize.sync().then(() => {
